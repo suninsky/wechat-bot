@@ -126,14 +126,14 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
-<!--                <configuration>-->
-<!--                    <excludes>-->
-<!--                        <exclude>-->
-<!--                            <groupId>org.springframework.boot</groupId>-->
-<!--                            <artifactId>spring-boot-configuration-processor</artifactId>-->
-<!--                        </exclude>-->
-<!--                    </excludes>-->
-<!--                </configuration>-->
+                <!--                <configuration>-->
+                <!--                    <excludes>-->
+                <!--                        <exclude>-->
+                <!--                            <groupId>org.springframework.boot</groupId>-->
+                <!--                            <artifactId>spring-boot-configuration-processor</artifactId>-->
+                <!--                        </exclude>-->
+                <!--                    </excludes>-->
+                <!--                </configuration>-->
             </plugin>
 
 
@@ -151,7 +151,7 @@
                         <configuration>
                             <sourceDirs>
                                 <sourceDir>${project.basedir}/src/main/kotlin</sourceDir>
-                                <!--                                <sourceDir>${project.basedir}/src/main/java</sourceDir>-->
+                                <sourceDir>${project.basedir}/src/main/java</sourceDir>
                             </sourceDirs>
                         </configuration>
                     </execution>
@@ -177,6 +177,16 @@
                         <version>1.4.0</version>
                     </dependency>
                 </dependencies>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.1</version>
+                <configuration>
+                    <source>${java.version}</source>
+                    <target>${java.version}</target>
+                </configuration>
             </plugin>
         </plugins>
     </build>
