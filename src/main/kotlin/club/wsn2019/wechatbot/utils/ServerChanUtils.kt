@@ -11,13 +11,12 @@ class ServerChanUtils(
 ) {
 
     fun push(text: String, desp: String) {
-        println("gg: " + wechatBotProperties.serverChanToken)
-        URL("https://sc.ftqq.com/$wechatBotProperties.serverChanToken.send?text=$text&desp=$desp").openStream()
+        HttpUtils.getForResponse("https://sc.ftqq.com/${wechatBotProperties.serverChanToken}.send?text=$text")
     }
 
     fun push(text: String) {
-        URL("https://sc.ftqq.com/$wechatBotProperties.serverChanToken.send?text=$text").openStream()
-        println("gg: " + wechatBotProperties.serverChanToken)
+        push(text,"")
     }
 
 }
+
