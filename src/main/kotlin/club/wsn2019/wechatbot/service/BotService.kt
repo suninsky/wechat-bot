@@ -3,8 +3,10 @@ package club.wsn2019.wechatbot.service
 import club.wsn2019.wechatbot.entity.Message
 import club.wsn2019.wechatbot.entity.MessageType
 import club.wsn2019.wechatbot.entity.User
+import club.wsn2019.wechatbot.utils.ServerChanUtils
 import io.github.wechaty.Wechaty
 import io.github.wechaty.schemas.ContactQueryFilter
+import io.github.wechaty.schemas.RoomQueryFilter
 import org.springframework.data.mongodb.core.MongoTemplate
 import org.springframework.stereotype.Service
 
@@ -14,7 +16,8 @@ import org.springframework.stereotype.Service
 @Service
 class BotService(
     private val wechaty: Wechaty,
-    private val mongoTemplate: MongoTemplate
+    private val mongoTemplate: MongoTemplate,
+    private val serverChanUtils: ServerChanUtils
 ) {
 
     fun send(message: Message) {
@@ -36,6 +39,15 @@ class BotService(
                 // https://wechaty.js.org/v/zh/faq#endless-talking-1
                 // 2.12提到了这个bug
                 // 测试群的群号直接加载
+                val me = mongoTemplate.findById(wechaty.userSelf().id, User::class.java)!!
+                me.rooms[message.destination]?.also {
+                    val roomQueryFilter = RoomQueryFilter()
+                    roomQueryFilter.topic = message.destination
+                    wechaty.roomManager.find(roomQueryFilter)?.id
+                }?.let {
+                    val room = wechaty.roomManager.load(it)
+                    serverChanUtils.push(room.getTopic().get())
+                }
                 val room = wechaty.roomManager.load("22890895834@chatroom")
                 room.say(message.content)
             }

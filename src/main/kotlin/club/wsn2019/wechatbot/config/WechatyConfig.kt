@@ -77,6 +77,7 @@ open class WechatyConfig(
                     roomManager.findAll(RoomQueryFilter()).forEach{
                         user.rooms[it.getTopic().get()] = it.id
                     }
+                    mongoTemplate.save(user)
                 }
             })
 
