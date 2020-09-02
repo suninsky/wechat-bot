@@ -35,10 +35,6 @@ class BotService(
             }
 
             MessageType.ROOM -> {
-                // 这里用过滤器搜索会有可能搜不到，因为wechaty库的原因
-                // https://wechaty.js.org/v/zh/faq#endless-talking-1
-                // 2.12提到了这个bug
-                // 测试群的群号直接加载
                 val me = mongoTemplate.findById(wechaty.userSelf().id, User::class.java)!!
                 me.rooms[message.destination]?.also {
                     val roomQueryFilter = RoomQueryFilter()
