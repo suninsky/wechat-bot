@@ -15,7 +15,7 @@ class BotController(
 ) {
 
     @PostMapping("/sendMessage")
-    fun send(@RequestBody message: Message): IResult {
+    fun sendMessage(@RequestBody message: Message): IResult {
         return try {
             botService.send(message)
             SuccessResult()
@@ -23,4 +23,26 @@ class BotController(
             FailureResult(e.message)
         }
     }
+
+    @PostMapping("/createRoom")
+    fun createRoom(@RequestBody roomName: String): IResult {
+        return try {
+            //botService
+            SuccessResult()
+        } catch (e: Exception) {
+            FailureResult(e.message)
+        }
+    }
+
+    @PostMapping("/deleteRoom")
+    fun deleteRoom(@RequestBody roomName: String): IResult {
+        return try {
+            //botService.send(message)
+            SuccessResult()
+        } catch (e: Exception) {
+            FailureResult(e.message)
+        }
+    }
+
+
 }

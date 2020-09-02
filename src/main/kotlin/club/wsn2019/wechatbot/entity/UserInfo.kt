@@ -7,7 +7,13 @@ import org.springframework.data.annotation.Id
  */
 data class User(
     @Id val id: String,
-    val name: String,
-    val contactList: List<String>,
-    val roomList: List<String>
+    val name: String = "",
+    /**
+     * contactName to contactId
+     */
+    val contacts: MutableMap<String,String> = HashMap(),
+    /**
+     * roomName to roomId
+     */
+    val rooms: MutableMap<String, String> = HashMap()
 )

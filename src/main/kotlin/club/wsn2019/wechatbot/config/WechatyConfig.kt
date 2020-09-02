@@ -1,5 +1,6 @@
 package club.wsn2019.wechatbot.config
 
+import club.wsn2019.wechatbot.entity.User
 import club.wsn2019.wechatbot.utils.CommandUtils
 import club.wsn2019.wechatbot.utils.ServerChanUtils
 import io.github.wechaty.*
@@ -15,13 +16,15 @@ import org.slf4j.LoggerFactory
 import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.data.mongodb.core.MongoTemplate
 import java.util.*
 
 @EnableConfigurationProperties(WechatBotProperties::class)
 @Configuration
 open class WechatyConfig(
     private val wechatBotProperties: WechatBotProperties,
-    private val serverChanUtils: ServerChanUtils
+    private val serverChanUtils: ServerChanUtils,
+    private val mongoTemplate: MongoTemplate
 ) {
 
     private val log: Logger = LoggerFactory.getLogger(this.javaClass)
@@ -65,24 +68,24 @@ open class WechatyConfig(
             on(EventEnum.READY, object : Listener {
                 override fun handler(vararg any: Any) {
                     log.info("all data ready")
-                    log.info(contactManager.findAll(ContactQueryFilter()).toString())
-                    log.info(roomManager.findAll(RoomQueryFilter()).toString())
+                    serverChanUtils.push("all data ready")
+                    val id = userSelf().id
+                    val user = mongoTemplate.findById(id, User::class.java) ?: User(id)
+                    contactManager.findAll(ContactQueryFilter()).forEach {
+                        user.contacts[it.name()] = it.id
+                    }
+                    roomManager.findAll(RoomQueryFilter()).forEach{
+                        user.rooms[it.getTopic().get()] = it.id
+                    }
                 }
             })
 
             on(EventEnum.FRIENDSHIP, object : Listener {
                 override fun handler(vararg any: Any) {
                     val friendship = any[0] as Friendship
+                    friendship.accept()
                     log.info(friendship.hello())
                     log.info(friendship.toJson())
-                }
-            })
-
-            onRoomJoin(object : RoomJoinListener {
-                override fun handler(room: Room, inviteeList: List<Contact>, inviter: Contact, date: Date) {
-                    val names = inviteeList.stream().map { invitee: Contact -> invitee.name() }
-                        .reduce { t: String?, u: String? -> "$t, $u" }
-                    room.say("欢迎新成员: {$names}")
                 }
             })
 
