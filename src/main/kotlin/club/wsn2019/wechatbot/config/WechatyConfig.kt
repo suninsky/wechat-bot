@@ -50,14 +50,20 @@ open class WechatyConfig(
                     val from = message.from()
                     val room = message.room()
                     val text = message.text()
+                    val id = userSelf().id
+                    val user = mongoTemplate.findById(id, User::class.java) ?: User(id)
                     if (room == null) { // shell功能私聊限定
                         from?.let {
                             if (it.name() == "微信团队") { // 忽略微信团队的消息
                                 return
                             }
+                            user.contacts[from.name()] = id
                             it.say(CommandUtils.run(text))
                         }
+                    } else {
+                        user.rooms[room.getTopic().get()] = room.id
                     }
+                    mongoTemplate.save(user)
                 }
             })
             onLogin(object : LoginListener {
@@ -97,7 +103,6 @@ open class WechatyConfig(
                         room.say("不要修改群名", changer)
                     }
                 }
-
             })
             start(false)
         }

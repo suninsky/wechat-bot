@@ -7,6 +7,8 @@ import club.wsn2019.wechatbot.utils.ServerChanUtils
 import io.github.wechaty.Wechaty
 import io.github.wechaty.schemas.ContactQueryFilter
 import io.github.wechaty.schemas.RoomQueryFilter
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.data.mongodb.core.MongoTemplate
 import org.springframework.stereotype.Service
 
@@ -16,35 +18,33 @@ import org.springframework.stereotype.Service
 @Service
 class BotService(
     private val wechaty: Wechaty,
-    private val mongoTemplate: MongoTemplate,
-    private val serverChanUtils: ServerChanUtils
+    private val mongoTemplate: MongoTemplate
 ) {
 
+    private val log: Logger = LoggerFactory.getLogger(this.javaClass)
+
     fun send(message: Message) {
+        val me = mongoTemplate.findById(wechaty.userSelf().id, User::class.java) ?: throw RuntimeException("机器人尚未初始化")
         when (message.type) {
             MessageType.PRIVATE -> {
-                val me = mongoTemplate.findById(wechaty.userSelf().id, User::class.java)!!
-                me.contacts[message.destination]?.also {
+                val contactId = me.contacts[message.destination]?.also {
                     val contactQueryFilter = ContactQueryFilter()
                     contactQueryFilter.name = message.destination
                     wechaty.contactManager.find(contactQueryFilter)?.id
-                }?.let {
-                    val user = wechaty.contactManager.load(it)
-                    user.say(message.content)
-                }
+                } ?: throw RuntimeException("请先发送一条私聊消息给机器人")
+                val user = wechaty.contactManager.load(contactId)
+                user.say(message.content)
             }
 
             MessageType.ROOM -> {
-                val me = mongoTemplate.findById(wechaty.userSelf().id, User::class.java)!!
-                me.rooms[message.destination]?.also {
+                val roomId = me.rooms[message.destination]?.also {
                     val roomQueryFilter = RoomQueryFilter()
                     roomQueryFilter.topic = message.destination
+                    log.info(message.destination)
                     wechaty.roomManager.find(roomQueryFilter)?.id
-                }?.let {
-                    val room = wechaty.roomManager.load(it)
-                    serverChanUtils.push(room.getTopic().get())
-                }
-                val room = wechaty.roomManager.load("22890895834@chatroom")
+                } ?: throw RuntimeException("请先发送一条群消息给机器人")
+                val room = wechaty.roomManager.load(roomId)
+                log.info(room.getTopic().get())
                 room.say(message.content)
             }
         }
