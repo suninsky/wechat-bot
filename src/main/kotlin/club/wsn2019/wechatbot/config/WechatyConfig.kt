@@ -80,7 +80,7 @@ open class WechatyConfig(
                     contactManager.findAll(ContactQueryFilter()).forEach {
                         user.contacts[it.name()] = it.id
                     }
-                    roomManager.findAll(RoomQueryFilter()).forEach{
+                    roomManager.findAll(RoomQueryFilter()).forEach {
                         user.rooms[it.getTopic().get()] = it.id
                     }
                     mongoTemplate.save(user)

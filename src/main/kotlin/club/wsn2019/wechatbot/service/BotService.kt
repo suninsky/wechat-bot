@@ -3,7 +3,6 @@ package club.wsn2019.wechatbot.service
 import club.wsn2019.wechatbot.entity.Message
 import club.wsn2019.wechatbot.entity.MessageType
 import club.wsn2019.wechatbot.entity.User
-import club.wsn2019.wechatbot.utils.ServerChanUtils
 import io.github.wechaty.Wechaty
 import io.github.wechaty.schemas.ContactQueryFilter
 import io.github.wechaty.schemas.RoomQueryFilter

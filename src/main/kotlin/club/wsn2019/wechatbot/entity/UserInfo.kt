@@ -11,7 +11,7 @@ data class User(
     /**
      * contactName to contactId
      */
-    val contacts: MutableMap<String,String> = HashMap(),
+    val contacts: MutableMap<String, String> = HashMap(),
     /**
      * roomName to roomId
      */

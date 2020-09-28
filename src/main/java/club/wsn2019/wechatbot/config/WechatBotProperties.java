@@ -18,7 +18,7 @@ public class WechatBotProperties {
     @NotNull
     private String wechatyToken = "";
     @NotNull
-    private String serverChanToken = "";
+    private List<String> serverChanTokens = new ArrayList<>();
     @NotNull
     private List<String> ignoreIds = new ArrayList<>();
 
@@ -32,12 +32,12 @@ public class WechatBotProperties {
     }
 
     @NotNull
-    public String getServerChanToken() {
-        return serverChanToken;
+    public List<String> getServerChanTokens() {
+        return serverChanTokens;
     }
 
-    public void setServerChanToken(@NotNull String serverChanToken) {
-        this.serverChanToken = serverChanToken;
+    public void setServerChanTokens(@NotNull List<String> serverChanTokens) {
+        this.serverChanTokens = serverChanTokens;
     }
 
     @NotNull

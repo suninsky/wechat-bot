@@ -1,0 +1,31 @@
+logging:
+  file:
+    name: wechat-bot.log
+management:
+  endpoint:
+    health:
+      show-details: always
+    logfile:
+      enabled: true
+    shutdown:
+      enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+server:
+  port: 8090
+spring:
+  application:
+    name: wechat-bot
+  boot:
+    admin:
+      client:
+        url: YOUR_URL
+  data:
+    mongodb:
+      uri: MONGODB_URL
+wechat-bot:
+  ignore-ids: filehelper,floatbottle
+  server-chan-tokens: YOUR_TOKEN
+  wechaty-token: YOUR_TOKEN
